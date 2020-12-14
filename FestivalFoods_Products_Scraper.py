@@ -26,7 +26,7 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     chrome_options.add_experimental_option('localState',chromeLocalStatePrefs)
     driver = webdriver.Chrome(options=chrome_options, executable_path=r'chromedriver.exe')
     driver.get("https://www.festfoods.com/shop#!/?q={}".format(product))
-    driver.get("https://www.festfoods.com/my-store/store-locator")
+    #driver.get("https://www.festfoods.com/my-store/store-locator")
     
     price_line = re.compile('\$[0-9]+\.[0-9][0-9]$')
                
@@ -100,28 +100,26 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
         print("\n")
         driver.close()        
     
+    time.sleep(10)
+    
     soup = BeautifulSoup(driver.page_source, 'lxml')
     products_not_on_sale = soup.select('li', class_="fp-item     ")
-    products_on_sale = soup.select('li', class_="fp-item    fp-item-fixed_price ")
+    products_on_sale = soup.select('li', class_="fp-item    fp-item-fixed_price ")    
         
-    #print("soup_links is: ")
-    #print(products_not_on_sale_links)
-    
     count = 0
     
-    for product in products_not_on_sale:
+    for product in products_not_on_sale:        
         
-        
-        
-        items = product.select('div[class="fp-item-detail"]')
+        items = product.select('div[class="fp-item-detail"]')        
         
         if len(items) > 0:
             
             for item in items:
                 count += 1
-                #print('I am in the first page of results about to get the products (not on sale)')
+                print('I am in the first page of results about to get the products (not on sale)')
                 new_product = Product()
                 new_product.name = item.select('a')[0].getText()
+                #print("the product name in first page (not on sale) is: " + new_product.name)
                 new_product.price = Decimal(item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', ''))
                 size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
                 
@@ -142,18 +140,20 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     
     count = 0
     
-    for product in products_on_sale:
+    for product in products_on_sale:        
         
-        items_list = product.select('div[class="fp-item-content"]')
+        items_list = product.select('div[class="fp-item-detail fp-is-item-detail-sale"]')
+
+        print("I have just tried to populate items_list")
         
         if len(items_list) > 0:
             
             for item in items_list:
                 count += 1
-                #print('I am in the first page of results about to get the products (on sale)')
-                new_product = Product()
-                new_product.name = item.select('div[class="fp-item-name notranslate"]')[0].select('a')[0].getText()
-                # print(new_product.name)
+                print('I am in the first page of results about to get the products (on sale)')
+                new_product = Product()                
+                new_product.name = item.select('a')[0].getText()
+                print("the product name in first page (on sale) is: " + new_product.name)
                 price = item.select('span', class_='fp-item-sale-date')[0].getText()
                 price_split = price.split(' (')
                 
@@ -166,14 +166,25 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 else:
                     continue
                 new_product.price = Decimal(price.replace('$', ''))
+                print("the product price in first page (on sale) is: " + str(new_product.price))
                 size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
-                if not len(size) == 2:
-                    continue
-                new_product.size = [Decimal(size[0]), size[1]]                
+                print("I am about to go into if statement (on sale page 1)")
+                print("the size in first page before if statement (on sale) is: " + str(size))
+                
+                if len(size) == 1:
+                    print("I am in if statement (on sale page 1)")
+                    new_product.size = [Decimal(1), size[0]]
+                else:
+                    print("I am in else statement (on sale page 1)")
+                    new_product.size = [Decimal(size[0]), size[1]]                    
+                    
+                print("the size in first page (on sale) is: " + str(size)) # ['lb']                
                 new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]                
                 new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')                
                 new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
-                #print('I am in the first page of results about to click next (on sale)')
+                print("the product size in first page (on sale) is: " + str(new_product.size))
+                print("the product price per in first page (on sale) is: " + str(new_product.price_per))
+                print('I am in the first page of results about to click next (on sale)')
                 new_product.website = 'FestivalFoods'
                 list_of_products.append(new_product)
                 
@@ -188,21 +199,19 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
         print("the product results on the second page")
         print(product)
         print("\n")
-        driver.close()
+        driver.close()   
         
-    
-        
-    #time.sleep(10)
+    time.sleep(10)
+    #time.sleep(15)
     soup = BeautifulSoup(driver.page_source, 'lxml')
     products_not_on_sale = soup.select('li', class_="fp-item     ")
-    products_on_sale = soup.select('li', class_="fp-item    fp-item-fixed_price ")
+    products_on_sale = soup.select('li', class_="fp-item    fp-item-fixed_price ")    
         
     #time.sleep(10)
     #print('I have just slept for 10 seconds')
     count = 0
     
-    for product in products_not_on_sale:
-        
+    for product in products_not_on_sale:        
                     
         items = product.select('div[class="fp-item-detail"]')
         
@@ -217,19 +226,16 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 #print('the product name in 2nd page (not on sale) is: ' + new_product.name)
                 #print('the product price in 2nd page (not on sale) just from XPath is: ' + item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', ''))
                 
-                # price
-                price = item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', '')                
-                #price_regex = re.search(price, "for") #doesn't work
+                price = item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', '')                                
                 price_regex = re.findall("for", price)
                 if price_regex:
                     #print("the product price in 2nd page (not on sale) in price variable inside if statement is: "  + price)
-                    #new_product.price = Decimal(price.replace('for', '').split(" ")) 
                     new_product.price = price.replace('for', '').split(" ")
                     new_product.price = str([round(Decimal(new_product.price[0]) / Decimal(new_product.price[2]), 2)]).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '') # divide the first item in the array by the third and remove the word 'Decimal', (), '', and [].
                     #print("the product price in 2nd page (not on sale) inside if statement is: " + new_product.price)
                     new_product.price = Decimal(new_product.price)
                 else:
-                    #print("the product price in 2nd page (not on sale) in price variable inside if statement else block statement is: "  + price) #4 for 5.00
+                    #print("the product price in 2nd page (not on sale) in price variable inside if statement else block statement is: "  + price) #
                     new_product.price = Decimal(price)                    
                 
                 #print("The product price in second page not on sale is: " + str(new_product.price))
@@ -255,7 +261,7 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     for product in products_on_sale:
                 
         #time.sleep(10)
-        items_list = product.select('div[class="fp-item-content"]')
+        items_list = product.select('div[class="fp-item-detail fp-is-item-detail-sale"]')
         
         if len(items_list) > 0:
             #time.sleep(10)
@@ -278,10 +284,13 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 else:
                     continue
                 new_product.price = Decimal(price.replace('$', ''))
-                size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
-                if not len(size) == 2:
-                    continue
-                new_product.size = [Decimal(size[0]), size[1]]                
+                size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")           
+                    
+                if len(size) == 1:
+                    new_product.size = [Decimal(1), size[0]]
+                else:
+                    new_product.size = [Decimal(size[0]), size[1]]                    
+                
                 new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]
                 new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
                 new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
