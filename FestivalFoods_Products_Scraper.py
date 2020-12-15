@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.expected_conditions import element_to_be_clickable
 from selenium.webdriver.support.expected_conditions import url_changes
+from selenium.webdriver.common.action_chains import *
 from decimal import Decimal
 from Product import Product
 from selenium.common.exceptions import TimeoutException
@@ -14,6 +15,8 @@ import re
 import time
 from selenium.common.exceptions import ElementNotVisibleException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import *
+from fractions import Fraction
 
 def scrape_FestivalFoods_search_results(list_of_products, product):
 
@@ -29,10 +32,11 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     #driver.get("https://www.festfoods.com/my-store/store-locator")
     
     price_line = re.compile('\$[0-9]+\.[0-9][0-9]$')
-               
+    size_letters_and_numbers = re.compile('\S*(\S*([a-zA-Z]\S*[0-9])|([0-9]\S*[a-zA-Z]))\S*')
+    trailing_periods = re.compile('\.(?!\d)')
+    
     wait = WebDriverWait(driver, 30)
     #print("I have just declared the wait and am now about to wait until the first div on the page is present")
-    #"/html/body/div[1]/div/main/section/div[4]/div[1]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a"))
     element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]"))    
     
     try:
@@ -87,20 +91,26 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     except TimeoutException:
         print("shop could not be clicked")
         driver.close()
+      
         
-    element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "//ul[@class='fp-result-list fp-product-list fp-product-list-lg']"))
+    element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a"))
     
     try:
         wait.until(element_present);
+        #signUpForOurMobileClubXButton = #driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[2]/button/svg/g/path")
+        #signUpForOurMobileClubXButton = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[2]/button/svg")        
+        #driver.execute_script("arguments[0].click();", signUpForOurMobileClubXButton)        
         #print("found product list")
     except TimeoutException:
         print("Could not scan FestivalFoods for:", end = " ")
         print("the product results")
         print(product)
         print("\n")
-        driver.close()        
+        driver.close()  
     
-    time.sleep(10)
+    time.sleep(3)
+    
+    #mydivs = soup.findAll("div", {"class": "fp-btn-icon fp-btn-next"})
     
     soup = BeautifulSoup(driver.page_source, 'lxml')
     products_not_on_sale = soup.select('li', class_="fp-item     ")
@@ -116,7 +126,7 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
             
             for item in items:
                 count += 1
-                print('I am in the first page of results about to get the products (not on sale)')
+                #print('I am in the first page of results about to get the products (not on sale)')
                 new_product = Product()
                 new_product.name = item.select('a')[0].getText()
                 #print("the product name in first page (not on sale) is: " + new_product.name)
@@ -144,16 +154,16 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
         
         items_list = product.select('div[class="fp-item-detail fp-is-item-detail-sale"]')
 
-        print("I have just tried to populate items_list")
+        #print("I have just tried to populate items_list")
         
         if len(items_list) > 0:
             
             for item in items_list:
                 count += 1
-                print('I am in the first page of results about to get the products (on sale)')
+                #print('I am in the first page of results about to get the products (on sale)')
                 new_product = Product()                
                 new_product.name = item.select('a')[0].getText()
-                print("the product name in first page (on sale) is: " + new_product.name)
+                #print("the product name in first page (on sale) is: " + new_product.name)
                 price = item.select('span', class_='fp-item-sale-date')[0].getText()
                 price_split = price.split(' (')
                 
@@ -166,137 +176,265 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 else:
                     continue
                 new_product.price = Decimal(price.replace('$', ''))
-                print("the product price in first page (on sale) is: " + str(new_product.price))
+                #print("the product price in first page (on sale) is: " + str(new_product.price))
                 size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
-                print("I am about to go into if statement (on sale page 1)")
-                print("the size in first page before if statement (on sale) is: " + str(size))
+                #print("I am about to go into if statement (on sale page 1)")
+                #print("the size in first page before if statement (on sale) is: " + str(size))
                 
                 if len(size) == 1:
-                    print("I am in if statement (on sale page 1)")
+                    #print("I am in if statement (on sale page 1)")
                     new_product.size = [Decimal(1), size[0]]
                 else:
-                    print("I am in else statement (on sale page 1)")
+                    #print("I am in else statement (on sale page 1)")
                     new_product.size = [Decimal(size[0]), size[1]]                    
                     
-                print("the size in first page (on sale) is: " + str(size)) # ['lb']                
+                #print("the size in first page (on sale) is: " + str(size)) # ['lb']                
                 new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]                
                 new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')                
                 new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
-                print("the product size in first page (on sale) is: " + str(new_product.size))
-                print("the product price per in first page (on sale) is: " + str(new_product.price_per))
-                print('I am in the first page of results about to click next (on sale)')
+                #print("the product size in first page (on sale) is: " + str(new_product.size))
+                #print("the product price per in first page (on sale) is: " + str(new_product.price_per))
+                #print('I am in the first page of results about to click next (on sale)')
                 new_product.website = 'FestivalFoods'
                 list_of_products.append(new_product)
                 
-    # go to the next page
-    try: 
-        next_button = driver.find_element_by_xpath("/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[3]/div/div/ul/li[11]/a")
-        driver.execute_script("arguments[0].click();", next_button)
-        #print('I have just clicked next')
-        wait.until(element_present)
-    except TimeoutException:
-        print("Could not scan FestivalFoods for:", end = " ")
-        print("the product results on the second page")
-        print(product)
-        print("\n")
-        driver.close()   
-        
-    time.sleep(10)
-    #time.sleep(15)
-    soup = BeautifulSoup(driver.page_source, 'lxml')
-    products_not_on_sale = soup.select('li', class_="fp-item     ")
-    products_on_sale = soup.select('li', class_="fp-item    fp-item-fixed_price ")    
-        
+    nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[3]/div/div/ul/li[11]/a')    
+    
+    pageCount = 2
+    
     #time.sleep(10)
-    #print('I have just slept for 10 seconds')
-    count = 0
+    #e = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'html')))
+    #element_present = expected_conditions.presence_of_all_elements_located((By.TAG_NAME, "html"))
+    #wait.until(element_present)
+    #ActionChains(self.driver).send_keys_to_element(e, Keys.F5).perform()
+    #ActionChains(driver).send_keys_to_element(element_present, Keys.F5).perform()
+    #driver.refresh()
+    #time.sleep(10)
     
-    for product in products_not_on_sale:        
-                    
-        items = product.select('div[class="fp-item-detail"]')
+    #while nextButtonLink.is_displayed():
+    while True:        
         
-        if len(items) > 0:
-            #time.sleep(10)
+        # go to the next page
+        try: 
+            nextPageLink = driver.find_element_by_link_text(str(pageCount))
+            signUpForOurMobileClubButton = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[1]/div/div[2]/ul/li[1]/button/span")
+                        
+            ActionChains(driver).move_to_element(signUpForOurMobileClubButton).click(nextPageLink).perform() 
             
-            for item in items:
-                count += 1
-                #print('I am on the second page of results')
-                new_product = Product()
-                new_product.name = item.select('a')[0].getText()
-                #print('the product name in 2nd page (not on sale) is: ' + new_product.name)
-                #print('the product price in 2nd page (not on sale) just from XPath is: ' + item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', ''))
-                
-                price = item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', '')                                
-                price_regex = re.findall("for", price)
-                if price_regex:
-                    #print("the product price in 2nd page (not on sale) in price variable inside if statement is: "  + price)
-                    new_product.price = price.replace('for', '').split(" ")
-                    new_product.price = str([round(Decimal(new_product.price[0]) / Decimal(new_product.price[2]), 2)]).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '') # divide the first item in the array by the third and remove the word 'Decimal', (), '', and [].
-                    #print("the product price in 2nd page (not on sale) inside if statement is: " + new_product.price)
-                    new_product.price = Decimal(new_product.price)
-                else:
-                    #print("the product price in 2nd page (not on sale) in price variable inside if statement else block statement is: "  + price) #
-                    new_product.price = Decimal(price)                    
-                
-                #print("The product price in second page not on sale is: " + str(new_product.price))
-                
-                size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
-                
-                new_product.url = "https://www.festfoods.com" + item.select('a')[0].get('href')
-                
-                if len(size) == 1:
-                    new_product.size = [Decimal(1), size[0]]
-                else:
-                    new_product.size = [Decimal(size[0]), size[1]]
-                #print("the product size on second page from new_product.size[0] is: " + str(new_product.size[0]))                 
-                new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]
-                new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
-                new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
-                new_product.website = 'FestivalFoods'
-                list_of_products.append(new_product)
+            if pageCount == 100:
+                #ActionChains(driver).send_keys(Keys.F5).perform()
+                #e = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'html')))
+                #ActionChains(self.driver).send_keys_to_element(e, Keys.F5).perform()
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 140:
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 200:
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 300:
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 400:
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 500:
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 600:
+                driver.refresh()
+                time.sleep(10)
+            
+            #print('I have just clicked next')
+            
+        #except TimeoutException:  
+        except NoSuchElementException:
+            print("I've either reached the end of the products or I had some trouble finding the page link.")
+            driver.close()   
+            
+        element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a"))
     
+        try:
+            wait.until(element_present);
+            #print("found product list")
+        except TimeoutException:
+            print("Could not scan FestivalFoods for page:", end = " ")
+            print(str(pageCount))
+            driver.close()  
         
-    count = 0
-    
-    for product in products_on_sale:
-                
+        pageCount += 1
+        print("next button found in while statement and I'm on page " + str(pageCount))
+        
+        time.sleep(3)
+        
+        soup = BeautifulSoup(driver.page_source, 'lxml')
+        products_not_on_sale = soup.select('li', class_="fp-item     ")
+        products_on_sale = soup.select('li', class_="fp-item    fp-item-fixed_price ")    
+            
         #time.sleep(10)
-        items_list = product.select('div[class="fp-item-detail fp-is-item-detail-sale"]')
+        #print('I have just slept for 10 seconds')
+        count = 0
         
-        if len(items_list) > 0:
-            #time.sleep(10)
+        for product in products_not_on_sale:        
+                        
+            items = product.select('div[class="fp-item-detail"]')
             
-            for item in items_list:
-                count += 1
-                #print('I am on the second page of results')
-                new_product = Product()
-                new_product.name = item.select('div[class="fp-item-name notranslate"]')[0].select('a')[0].getText()
-                # print(new_product.name)
-                price = item.select('span', class_='fp-item-sale-date')[0].getText()
-                price_split = price.split(' (')
+            if len(items) > 0:
+                #time.sleep(10)
                 
-                new_product.url = "https://www.festfoods.com" + item.select('a')[0].get('href')
-                
-                if len(price_split) == 2:
-                    price = price_split[0]
-                    if not price_line.match(price):
-                        continue
-                else:
-                    continue
-                new_product.price = Decimal(price.replace('$', ''))
-                size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")           
+                for item in items:
+                    count += 1
+                    #print('I am on the second page of results')
+                    new_product = Product()
+                    new_product.name = item.select('a')[0].getText()
+                    #print('the product name in 2nd page (not on sale) is: ' + new_product.name)
+                    #print('the product price in 2nd page (not on sale) just from XPath is: ' + item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', ''))
                     
-                if len(size) == 1:
-                    new_product.size = [Decimal(1), size[0]]
-                else:
-                    new_product.size = [Decimal(size[0]), size[1]]                    
+                    price = item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', '')                                
+                    price_regex = re.findall("for", price)
+                    if price_regex:
+                        #print("the product price in 2nd page (not on sale) in price variable inside if statement is: "  + price)
+                        new_product.price = price.replace('for', '').split(" ")
+                        new_product.price = str([round(Decimal(new_product.price[0]) / Decimal(new_product.price[2]), 2)]).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '') # divide the first item in the array by the third and remove the word 'Decimal', (), '', and [].
+                        #print("the product price in 2nd page (not on sale) inside if statement is: " + new_product.price)
+                        new_product.price = Decimal(new_product.price)
+                    else:
+                        #print("the product price in 2nd page (not on sale) in price variable inside if statement else block statement is: "  + price) #
+                        new_product.price = Decimal(price)                    
+                    
+                    #print("The product price in second page not on sale is: " + str(new_product.price))
+                    
+                    new_product.url = "https://www.festfoods.com" + item.select('a')[0].get('href')
+                    
+                    try:
+                        size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
+                    except IndexError:
+                       #size = []
+                       #size = ["ct"]
+                       #size[0] = "ct"
+                       size = ["ct"]
+                                        
+                    if size[0].endswith("."):
+                       #print("I'm inside if block")
+                       old = "."
+                       new = ""
+                       maxreplace = 1
+                       size[0] = new.join(size[0].rsplit(old, maxreplace))
+                       
+                    #if not size[0].isnumeric():
+                    if size_letters_and_numbers.match(size[0]):                    
+                       size = re.split('(\d+)',size[0])
+                       #size.pop(0)
+                       size[0] = size[1]
+                       size[1] = size[2]
+                    
+                    #print("size in not on sale is: " + str(size))
+                    
+                    if '/' in size[0] and '.' in size[0]:                    
+                       #print("regex matched")
+                       size_temp = re.split('/',size[0])                      
+                       #print("size[0] before multiplication is: " + size[0])
+                       #print("size_temp is: " + str(size0))                      
+                       size[0] = Decimal(size_temp[0]) * Decimal(size_temp[1])
+                       #print("size[0] after multiplication is: " + str(size[0]))
+                    
+                    if '/' in size[0]:
+                       #print("I'm inside symbol if block")
+                       size[0] = float(sum(Fraction(s) for s in size[0].split()))
+                       size[0] = Decimal(size[0])
+                    
+                    if len(size) == 1:
+                        
+                        new_product.size = [Decimal(1), size[0]]
+                    else:
+                        new_product.size = [Decimal(size[0]), size[1]]
+                    #print("the product size on second page from new_product.size[0] is: " + str(new_product.size[0]))   
+                    
+                    new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]
+                    new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
+                    new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
+                    new_product.website = 'FestivalFoods'
+                    list_of_products.append(new_product)
+        
+            
+        count = 0
+        
+        for product in products_on_sale:
+                    
+            #time.sleep(10)
+            items_list = product.select('div[class="fp-item-detail fp-is-item-detail-sale"]')
+            
+            if len(items_list) > 0:
+                #time.sleep(10)
                 
-                new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]
-                new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
-                new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
-                
-                new_product.website = 'FestivalFoods'
-                list_of_products.append(new_product)
+                for item in items_list:
+                    count += 1
+                    #print('I am on the second page of results')
+                    new_product = Product()
+                    new_product.name = item.select('div[class="fp-item-name notranslate"]')[0].select('a')[0].getText()
+                    # print(new_product.name)
+                    price = item.select('span', class_='fp-item-sale-date')[0].getText()
+                    price_split = price.split(' (')
+                    
+                    new_product.url = "https://www.festfoods.com" + item.select('a')[0].get('href')
+                    
+                    if len(price_split) == 2:
+                        price = price_split[0]
+                        if not price_line.match(price):
+                            continue
+                    else:
+                        continue
+                    new_product.price = Decimal(price.replace('$', ''))
+                    
+                    #size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
+                    try:
+                        size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
+                    except IndexError:
+                        #size = []
+                        #size = ["ct"]
+                        #size[0] = "ct"
+                        size = ["ct"]
+                        
+                    if size[0].endswith("."):
+                       #print("I'm inside if block trailing period for size, on sale")
+                       old = "."
+                       new = ""
+                       maxreplace = 1
+                       size[0] = new.join(size[0].rsplit(old, maxreplace))
+                    
+                    #if not size[0].isnumeric():
+                    if size_letters_and_numbers.match(size[0]):
+                       size = re.split('(\d+)',size[0])
+                       size[0] = size[1]
+                       size[1] = size[2]
+                       #size.pop(0) 
+                       
+                    if '/' in size[0] and '.' in size[0]:                    
+                       #print("regex matched")
+                       size_temp = re.split('/',size[0])                      
+                       #print("size[0] before multiplication is: " + size[0])
+                       #print("size_temp is: " + str(size0))                      
+                       size[0] = Decimal(size_temp[0]) * Decimal(size_temp[1])
+                       #print("size[0] after multiplication is: " + str(size[0]))
+                    
+                    if '/' in size[0]:
+                       #print("I'm inside symbol if block")
+                       size[0] = float(sum(Fraction(s) for s in size[0].split()))
+                       size[0] = Decimal(size[0])
+                    
+                    if len(size) == 1:
+                        new_product.size = [Decimal(1), size[0]]
+                    else:
+                        new_product.size = [Decimal(size[0]), size[1]]                    
+                    
+                    new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]
+                    new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
+                    new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
+                    
+                    new_product.website = 'FestivalFoods'
+                    list_of_products.append(new_product)
+    
     
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0',
     'X-Requested-With': 'XMLHttpRequest',}
