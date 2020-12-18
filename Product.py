@@ -12,6 +12,7 @@ class Product:
         self.shipping_cost = ""
         self.size = ""
         self.url = ""
+        self.page_number = ""
 
     def printProduct(self):
         if self.website == "Amazon":
@@ -38,4 +39,6 @@ class Product:
             print("Price per unit:", end = " ")
             print(self.price_per)
             print("URL:", end = " ")
-            print(self.url)            
+            print(self.url)   
+            print("Page number:", end = " ")
+            print(self.page_number)   
