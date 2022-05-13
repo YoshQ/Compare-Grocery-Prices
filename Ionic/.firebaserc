@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "devdacticfire-84e24": {
+      "hosting": {
+        "app": [
+          "devdacticfire-84e24"
+        ]
+      }
+    }
+  }
+}
