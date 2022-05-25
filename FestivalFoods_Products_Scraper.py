@@ -214,31 +214,21 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 
     nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[3]/div/div/ul/li[11]/a')    
     
-    pageCount = 2
+    pageCount = 2    
     
-    #time.sleep(10)
-    #e = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'html')))
-    #element_present = expected_conditions.presence_of_all_elements_located((By.TAG_NAME, "html"))
-    #wait.until(element_present)
-    #ActionChains(self.driver).send_keys_to_element(e, Keys.F5).perform()
-    #ActionChains(driver).send_keys_to_element(element_present, Keys.F5).perform()
-    #driver.refresh()
-    #time.sleep(10)
+    #time.sleep(10)    
     
-    #while nextButtonLink.is_displayed():
     while True:        
         
         # go to the next page
         try: 
             nextPageLink = driver.find_element_by_link_text(str(pageCount))
-            signUpForOurMobileClubButton = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[1]/div/div[2]/ul/li[1]/button/span")
+            #signUpForOurMobileClubButton = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[1]/div/div[2]/ul/li[1]/button/span")
+            signUpForOurMobileClubButton = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div/div/div[2]/ul/li[1]/a/span")            
                         
             ActionChains(driver).move_to_element(signUpForOurMobileClubButton).click(nextPageLink).perform() 
             
-            if pageCount == 100:
-                #ActionChains(driver).send_keys(Keys.F5).perform()
-                #e = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'html')))
-                #ActionChains(self.driver).send_keys_to_element(e, Keys.F5).perform()
+            if pageCount == 100:                                                
                 driver.refresh()
                 time.sleep(10)
             elif pageCount == 140:
@@ -260,14 +250,17 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 driver.refresh()
                 time.sleep(10)
             
-            #print('I have just clicked next')
+            print('I have just clicked next')
             
         #except TimeoutException:  
+        
         except NoSuchElementException:
+            #time.sleep(10)            
             print("I've either reached the end of the products or I had some trouble finding the page link.")
-            driver.close()   
+            driver.close() 
             
-        element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a"))
+        #time.sleep(10)
+        element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a"))      
     
         try:
             wait.until(element_present);
