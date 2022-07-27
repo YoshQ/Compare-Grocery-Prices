@@ -92,22 +92,6 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     #driver.get("https://www.festfoods.com/shop#!/?limit=48&page=168")
     #testing searching for a specific product
     driver.get("https://www.festfoods.com/shop#!/?limit=48&q=quaker%20oats%20rolled%20overnight%20oats&search_option_id=product")
-    
-    # click Shop
-    # try: 
-        # shop = driver.find_element_by_xpath("/html/body/div[1]/div/header/div/nav/section[2]/section[1]/div/div/div[4]/section/a/div[2]")
-        # driver.execute_script("arguments[0].click();", shop)
-        # per_page_string = "/html/body/div[1]/div/main/section/div[6]/div/div[1]/div/div/div[3]/label[1]/span[2]/button/span[1]"
-        # wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, per_page_string)));
-        # per_page = driver.find_element_by_xpath(per_page_string)       
-        # driver.execute_script("arguments[0].click();", per_page)
-        # forty_eight = driver.find_element_by_xpath("/html/body/div[1]/div/main/section/div[6]/div/div[1]/div/div/div[3]/label[1]/span[2]/span/span/span[5]/a")
-        # driver.execute_script("arguments[0].click();", forty_eight)
-        # #print("shop has been clicked")
-    # except TimeoutException:
-        # print("shop could not be clicked")
-        # driver.close()
-      
         
     #element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a")) #product list
     element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) #product list
@@ -158,12 +142,33 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 new_product.url = "https://www.festfoods.com" + item.select('a')[0].get('href')
                 #print(item.select('a')[0].get('href'))                
                 
-                #todo: handle if more than 2 elements. example: "144 fl oz".
+                # net wt 19 oz
                 if len(size) == 1:
                     new_product.size = [Decimal(1), size[0]]
-                else:
-                    new_product.size = [Decimal(size[0]), size[1]]
-                new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]                
+                else
+                    for n in size
+                        #is this a number?
+                        try:
+                            #val = int(size[n])
+                            val = Decimal(size[n])
+                            new_product.size = [Decimal(size[n])]    
+                        except ValueError:
+                            print("That's not an int!")
+                            
+                        position = n
+                    new_product.size = [Decimal(size[position]), size[1], size[2], size[3], etc.]
+                
+                #todo: handle if more than 2 elements. example: "144 fl oz".
+                
+                #else:
+                elif len(size) == 2:
+                    new_product.size = [Decimal(size[0]), size[1]]                
+                elif len(size) == 3:
+                    new_product.size = [Decimal(size[0]), size[1], size[2]]  
+                elif len(size) == 4:
+                    new_product.size = [Decimal(size[0]), size[1], size[2], size[3]]  
+                    
+                new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]] 
                 new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
                 new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
                 #print('I am in the first page of results about to click next (not on sale)')
