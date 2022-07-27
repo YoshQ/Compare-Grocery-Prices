@@ -17,6 +17,7 @@ from selenium.common.exceptions import ElementNotVisibleException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.common.exceptions import *
 from fractions import Fraction
+import random
 
 def scrape_FestivalFoods_search_results(list_of_products, product):
 
@@ -49,19 +50,27 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
         print("\n")
         #time.sleep(100) #sleep here
         driver.close()        
-        
-             
-    #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[5]/div/span[3]/a[1]")));
-    wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[6]/div/span[3]/a[1]")));    
-    #sign_in = driver.find_element_by_xpath("/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[5]/div/span[3]/a[1]")
-    sign_in = driver.find_element_by_xpath("/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[6]/div/span[3]/a[1]")    
+                
+    
+    #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[6]/div/span[3]/a[1]"))); # sign in 
+    wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[3]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a"))); # sign in   
+    #/html/body/div[3]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a
+
+
+    #sign_in = driver.find_element_by_xpath("/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[6]/div/span[3]/a[1]")
+    sign_in = driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a")  
+    
     driver.execute_script("arguments[0].click();", sign_in) #click sign in    
-    wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[2]/label/input")));
-    username = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[2]/label/input")
+    #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[2]/label/input"))); #username
+    wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[1]/label/input"))); #username
+    #username = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[2]/label/input")
+    username = driver.find_element_by_xpath("/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[1]/label/input")
     username.send_keys('xyoshqx@hotmail.com')
-    password = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[3]/label[1]/input")
+    #password = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[3]/label[1]/input")
+    password = driver.find_element_by_xpath("/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[2]/label[1]/input")
     password.send_keys('festivalfoods')
-    sign_in2 = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[2]/button")
+    #sign_in2 = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[2]/button")
+    sign_in2 = driver.find_element_by_xpath("/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[3]/button")
     driver.execute_script("arguments[0].click();", sign_in2)
     #time.sleep(100) #sleep here
     
@@ -79,29 +88,32 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
         #return
         driver.close()        
     
+    #testing going to a specific page
+    #driver.get("https://www.festfoods.com/shop#!/?limit=48&page=168")
+    #testing searching for a specific product
+    driver.get("https://www.festfoods.com/shop#!/?limit=48&q=quaker%20oats%20rolled%20overnight%20oats&search_option_id=product")
+    
     # click Shop
-    try: 
-        shop = driver.find_element_by_xpath("/html/body/div[1]/div/header/div/nav/section[2]/section[1]/div/div/div[4]/section/a/div[2]")
-        driver.execute_script("arguments[0].click();", shop)
-        per_page_string = "/html/body/div[1]/div/main/section/div[6]/div/div[1]/div/div/div[3]/label[1]/span[2]/button/span[1]"
-        wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, per_page_string)));
-        per_page = driver.find_element_by_xpath(per_page_string)       
-        driver.execute_script("arguments[0].click();", per_page)
-        forty_eight = driver.find_element_by_xpath("/html/body/div[1]/div/main/section/div[6]/div/div[1]/div/div/div[3]/label[1]/span[2]/span/span/span[5]/a")
-        driver.execute_script("arguments[0].click();", forty_eight)
-        #print("shop has been clicked")
-    except TimeoutException:
-        print("shop could not be clicked")
-        driver.close()
+    # try: 
+        # shop = driver.find_element_by_xpath("/html/body/div[1]/div/header/div/nav/section[2]/section[1]/div/div/div[4]/section/a/div[2]")
+        # driver.execute_script("arguments[0].click();", shop)
+        # per_page_string = "/html/body/div[1]/div/main/section/div[6]/div/div[1]/div/div/div[3]/label[1]/span[2]/button/span[1]"
+        # wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, per_page_string)));
+        # per_page = driver.find_element_by_xpath(per_page_string)       
+        # driver.execute_script("arguments[0].click();", per_page)
+        # forty_eight = driver.find_element_by_xpath("/html/body/div[1]/div/main/section/div[6]/div/div[1]/div/div/div[3]/label[1]/span[2]/span/span/span[5]/a")
+        # driver.execute_script("arguments[0].click();", forty_eight)
+        # #print("shop has been clicked")
+    # except TimeoutException:
+        # print("shop could not be clicked")
+        # driver.close()
       
         
-    element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a"))
+    #element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a")) #product list
+    element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) #product list
     
     try:
-        wait.until(element_present);
-        #signUpForOurMobileClubXButton = #driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[2]/button/svg/g/path")
-        #signUpForOurMobileClubXButton = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[2]/button/svg")        
-        #driver.execute_script("arguments[0].click();", signUpForOurMobileClubXButton)        
+        wait.until(element_present);      
         #print("found product list")
     except TimeoutException:
         print("Could not scan FestivalFoods for:", end = " ")
@@ -134,13 +146,8 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 #print("the product name in first page (not on sale) is: " + new_product.name)
                 price = item.select('span[class="fp-item-base-price"]')[0].getText().replace('$', '').split("for")
                 if len(price) == 1:
-                    #new_product.price = price.replace('$', ''))
-                    #new_product.price = price
                     new_product.price = Decimal(price[0])
                 else: 
-                    #price.replace('for','/'')                    
-                    #new_product.price = Decimal(price.replace('$', ''))
-                    #new_product.price = Decimal(price[0] / price[1])
                     new_product.price = (Decimal(price[0]) / Decimal(price[1]))
                     #print("new_product.price in else statement is: " + new_product.price)
                     print("new_product.price in else statement is: " + str(new_product.price))
@@ -151,6 +158,7 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 new_product.url = "https://www.festfoods.com" + item.select('a')[0].get('href')
                 #print(item.select('a')[0].get('href'))                
                 
+                #todo: handle if more than 2 elements. example: "144 fl oz".
                 if len(size) == 1:
                     new_product.size = [Decimal(1), size[0]]
                 else:
@@ -212,9 +220,13 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 new_product.website = 'FestivalFoods'
                 list_of_products.append(new_product)
                 
-    nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[3]/div/div/ul/li[11]/a')    
+    #nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[3]/div/div/ul/li[11]/a')    
+    nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[3]/div/div/ul/li[11]/a')  
     
-    pageCount = 2    
+
+    
+    #pageCount = 2
+    pageCount = 169 #testing
     
     #time.sleep(10)    
     
@@ -224,14 +236,29 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
         try: 
             nextPageLink = driver.find_element_by_link_text(str(pageCount))
             #signUpForOurMobileClubButton = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[1]/div/div[2]/ul/li[1]/button/span")
-            signUpForOurMobileClubButton = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div/div/div[2]/ul/li[1]/a/span")            
+            gasRewards = driver.find_element_by_xpath("/html/body/div[1]/div/footer/div[1]/div/div/div[3]/div/ul/li[1]/a")
                         
-            ActionChains(driver).move_to_element(signUpForOurMobileClubButton).click(nextPageLink).perform() 
+            # click next
+            #time.sleep(random.uniform(1.5, 15.5)) # detected on page 68
+            #time.sleep(random.uniform(1.5, 60)) # detected at page 12
+            time.sleep(random.uniform(10, 60))
+            #ActionChains(driver).move_to_element(signUpForOurMobileClubButton).click(nextPageLink).perform() 
+            ActionChains(driver).move_to_element(gasRewards).click(nextPageLink).perform() 
             
-            if pageCount == 100:                                                
+            #if pageCount == 3:
+            if pageCount == 100:
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 120:
                 driver.refresh()
                 time.sleep(10)
             elif pageCount == 140:
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 160:
+                driver.refresh()
+                time.sleep(10)
+            elif pageCount == 180:
                 driver.refresh()
                 time.sleep(10)
             elif pageCount == 200:
@@ -254,13 +281,19 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
             
         #except TimeoutException:  
         
+        #except InvalidSessionIdException as sessionE:          
+            #print("I may be seeing no products. Error: " + sessionE)
+            #driver.refresh()
+            #time.sleep(10)
+        
         except NoSuchElementException:
             #time.sleep(10)            
             print("I've either reached the end of the products or I had some trouble finding the page link.")
             driver.close() 
             
         #time.sleep(10)
-        element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a"))      
+        #element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a")) # product list
+        element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) # product list        
     
         try:
             wait.until(element_present);
@@ -393,14 +426,10 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                     else:
                         continue
                     new_product.price = Decimal(price.replace('$', ''))
-                    
-                    #size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
+                                        
                     try:
                         size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
-                    except IndexError:
-                        #size = []
-                        #size = ["ct"]
-                        #size[0] = "ct"
+                    except IndexError:                                                                        
                         size = ["ct"]
                         
                     if size[0].endswith("."):
@@ -409,13 +438,11 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                        new = ""
                        maxreplace = 1
                        size[0] = new.join(size[0].rsplit(old, maxreplace))
-                    
-                    #if not size[0].isnumeric():
+                                        
                     if size_letters_and_numbers.match(size[0]):
                        size = re.split('(\d+)',size[0])
                        size[0] = size[1]
-                       size[1] = size[2]
-                       #size.pop(0) 
+                       size[1] = size[2]                        
                        
                     if '/' in size[0] and '.' in size[0]:                    
                        #print("regex matched")
