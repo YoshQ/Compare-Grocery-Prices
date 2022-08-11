@@ -29,8 +29,9 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     chromeLocalStatePrefs = { 'browser.enabled_labs_experiments' : experimentalFlags}
     chrome_options.add_experimental_option('localState',chromeLocalStatePrefs)
     driver = webdriver.Chrome(options=chrome_options, executable_path=r'chromedriver.exe')
-    driver.get("https://www.festfoods.com/shop#!/?q={}".format(product))
+    #driver.get("https://www.festfoods.com/shop#!/?q={}".format(product))
     #driver.get("https://www.festfoods.com/my-store/store-locator")
+    driver.get("https://www.festfoods.com/my-account#!/login")
     
     price_line = re.compile('\$[0-9]+\.[0-9][0-9]$')
     size_letters_and_numbers = re.compile('\S*(\S*([a-zA-Z]\S*[0-9])|([0-9]\S*[a-zA-Z]))\S*')
@@ -53,14 +54,15 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 
     
     #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[6]/div/span[3]/a[1]"))); # sign in 
-    wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[3]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a"))); # sign in   
+    #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[2]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a"))); # sign in   
     #/html/body/div[3]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a
+    #/html/body/div[2]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a
 
 
     #sign_in = driver.find_element_by_xpath("/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[6]/div/span[3]/a[1]")
-    sign_in = driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a")  
+    #sign_in = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a") 
     
-    driver.execute_script("arguments[0].click();", sign_in) #click sign in    
+    #driver.execute_script("arguments[0].click();", sign_in) #click sign in    
     #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[2]/label/input"))); #username
     wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[1]/label/input"))); #username
     #username = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[2]/label/input")
@@ -90,8 +92,8 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     
     #testing going to a specific page
     #driver.get("https://www.festfoods.com/shop#!/?limit=48&page=168")
-    #testing searching for a specific product
-    driver.get("https://www.festfoods.com/shop#!/?limit=48&q=quaker%20oats%20rolled%20overnight%20oats&search_option_id=product")
+    driver.get("https://www.festfoods.com/shop#!/?limit=48&page=1")
+    #testing searching for a specific product    #driver.get(#"https://www.festfoods.com/shop#!/?limit=48&q=quaker%20oats%20rolled%20overnight%20oats&search_option_id=product")    
         
     #element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a")) #product list
     element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) #product list
@@ -142,31 +144,46 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 new_product.url = "https://www.festfoods.com" + item.select('a')[0].get('href')
                 #print(item.select('a')[0].get('href'))                
                 
+                position = 0
+                #print("Type of position variable before for loop is: " + type(position))
+                print(type(position))
                 # net wt 19 oz
                 if len(size) == 1:
                     new_product.size = [Decimal(1), size[0]]
-                else
-                    for n in size
+                else:
+                    for n in size:                        
                         #is this a number?
                         try:
                             #val = int(size[n])
-                            val = Decimal(size[n])
-                            new_product.size = [Decimal(size[n])]    
-                        except ValueError:
-                            print("That's not an int!")
-                            
-                        position = n
-                    new_product.size = [Decimal(size[position]), size[1], size[2], size[3], etc.]
+                            #val = Decimal(size[n])
+                            #val = Decimal(size[position])
+                            #new_product.size[0] = [Decimal(size[n])]
+                            new_product.size[0] = [Decimal(size[position])]
+                        #except ValueError:
+                        except TypeError:
+                            print(type(position))
+                            position2 = position + 1#put the desired index into a variable                            
+                            print(type(position2))
+                            new_product.size[position2] = size[position]#put everything that's not a number into
+                            #strIndex = n+1
+                            #strIndex = n++
+                            #position += 1 
+                            #new_product.size[n+1] = size[n]
+                            #new_product.size[strIndex] = size[n]                            
+                            #a spot that's not 0 because that's where the number is stored
+                        #position = n
+                        position += 1
+                    #new_product.size = [Decimal(size[position]), size[1], size[2], size[3], etc.]
                 
                 #todo: handle if more than 2 elements. example: "144 fl oz".
                 
                 #else:
-                elif len(size) == 2:
-                    new_product.size = [Decimal(size[0]), size[1]]                
-                elif len(size) == 3:
-                    new_product.size = [Decimal(size[0]), size[1], size[2]]  
-                elif len(size) == 4:
-                    new_product.size = [Decimal(size[0]), size[1], size[2], size[3]]  
+                #elif len(size) == 2:
+                    #new_product.size = [Decimal(size[0]), size[1]]                
+                #elif len(size) == 3:
+                    #new_product.size = [Decimal(size[0]), size[1], size[2]]  
+                #elif len(size) == 4:
+                    #new_product.size = [Decimal(size[0]), size[1], size[2], size[3]]  
                     
                 new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]] 
                 new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
@@ -230,8 +247,8 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     
 
     
-    #pageCount = 2
-    pageCount = 169 #testing
+    pageCount = 2
+    #pageCount = 169 #testing
     
     #time.sleep(10)    
     
