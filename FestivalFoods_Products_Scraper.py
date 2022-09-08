@@ -29,9 +29,7 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
     experimentalFlags = ['same-site-by-default-cookies@1','cookies-without-same-site-must-be-secure@1']
     chromeLocalStatePrefs = { 'browser.enabled_labs_experiments' : experimentalFlags}
     chrome_options.add_experimental_option('localState',chromeLocalStatePrefs)
-    driver = webdriver.Chrome(options=chrome_options, executable_path=r'chromedriver.exe')
-    #driver.get("https://www.festfoods.com/shop#!/?q={}".format(product))
-    #driver.get("https://www.festfoods.com/my-store/store-locator")
+    driver = webdriver.Chrome(options=chrome_options, executable_path=r'chromedriver.exe')    
     driver.get("https://www.festfoods.com/my-account#!/login")
     
     price_line = re.compile('\$[0-9]+\.[0-9][0-9]$')
@@ -53,26 +51,12 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
         #time.sleep(100) #sleep here
         driver.close()        
                 
-    
-    #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[6]/div/span[3]/a[1]"))); # sign in 
-    #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[2]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a"))); # sign in   
-    #/html/body/div[3]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a
-    #/html/body/div[2]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a
-
-
-    #sign_in = driver.find_element_by_xpath("/html/body/div[1]/div/header/div/nav/section[1]/div/div/div[6]/div/span[3]/a[1]")
-    #sign_in = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div[2]/div/div/div[2]/div/form/div[3]/a") 
-    
-    #driver.execute_script("arguments[0].click();", sign_in) #click sign in    
-    #wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[2]/label/input"))); #username
-    wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[1]/label/input"))); #username
-    #username = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[2]/label/input")
+          
+    wait.until(expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[1]/label/input"))); #username    
     username = driver.find_element_by_xpath("/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[1]/label/input")
-    username.send_keys('xyoshqx@hotmail.com')
-    #password = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[1]/div[3]/label[1]/input")
+    username.send_keys('xyoshqx@hotmail.com')    
     password = driver.find_element_by_xpath("/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[2]/label[1]/input")
-    password.send_keys('festivalfoods')
-    #sign_in2 = driver.find_element_by_xpath("/html/body/div[1]/div/main/div/div[2]/article/ul/li/div/div/div[3]/div/div/form/div[2]/button")
+    password.send_keys('festivalfoods')    
     sign_in2 = driver.find_element_by_xpath("/html/body/div[1]/div/div[2]/section/div[2]/div[2]/div/div/div/div/div/div/div/div/div[3]/div/div[1]/form/div[3]/button")
     driver.execute_script("arguments[0].click();", sign_in2)
     #time.sleep(100) #sleep here
@@ -87,20 +71,19 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 driver.execute_script("arguments[0].click();", make_this_my_store_button[18])
         #print("store has been selected")
     except TimeoutException:
-        print("store selection failed")
-        #return
+        print("store selection failed")        
         driver.close()        
     
     #go to a specific page for testing on some particular strings
-    driver.get("https://www.festfoods.com/shop#!/?limit=48&page=168")# testing
+    driver.get("https://www.festfoods.com/shop#!/?limit=48&page=176")# testing
     
     #go to the url for the first page
     #driver.get("https://www.festfoods.com/shop#!/?limit=48&page=1")
     
-    #testing searching for a specific product    #driver.get(#"https://www.festfoods.com/shop#!/?limit=48&q=quaker%20oats%20rolled%20overnight%20oats&search_option_id=product")    
-        
-    #element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a")) #product list
-    element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) #product list
+    #testing searching for a specific product    #driver.get(#"https://www.festfoods.com/shop#!/?limit=48&q=quaker%20oats%20rolled%20overnight%20oats&search_option_id=product")            
+    
+    #element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) #product list
+    element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[3]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) #product list    
     
     try:
         wait.until(element_present);      
@@ -112,10 +95,8 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
         print("\n")
         driver.close()  
     
-    time.sleep(3)
-    
-    #mydivs = soup.findAll("div", {"class": "fp-btn-icon fp-btn-next"})
-    
+    time.sleep(3)    
+        
     soup = BeautifulSoup(driver.page_source, 'lxml')
     products_not_on_sale = soup.select('li', class_="fp-item     ")
     products_on_sale = soup.select('li', class_="fp-item    fp-item-fixed_price ")    
@@ -151,13 +132,10 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 position = 0
                 #print("Type of position variable before for loop is: " + type(position))
                 #print(type(position))
-                #print(type(new_product.size[0]))
-                #size_array = []
+                #print(type(new_product.size[0]))                
                 #print(size_array[0])#not yet
-                #size_array[0] = "hello"
-                #size_array.append("hello")
                 #print(size_array[0])
-                # net wt 19 oz
+                # need to handle: net wt 19 oz
                 new_product.size = []
                 new_product.size.append(0)
                 if len(size) == 1:
@@ -167,25 +145,17 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                         #is this a number?
                         try:
                             new_product.size[0] = [Decimal(size[position])]
-                            #size1 = size[position]
-                            #new_product.size[0] = [Decimal(size1)]
-                            new_product.size[0] = Decimal(size[position])
-                        #except TypeError:
+                            new_product.size[0] = Decimal(size[position])                        
+                        #put everything that's not a number into a spot that's not 0 because that's where the number is stored   
                         except InvalidOperation:
-                            #print(type(position))
-                            #position2 = position + 1#put the desired index into a variable                            
-                            #print(type(position2))
-                            #new_product.size[position2] = size[position]#put everything that's not a number into
-                            #a spot that's not 0 because that's where the number is stored                                                 
-                            new_product.size.append(size[position])
-                            #new_product.size = [Decimal(1), size[0]]
-                        position += 1
-                
-                #todo: handle if more than 2 elements. example: "144 fl oz".                
+                            #print(type(position))    
+                            #print(type(position2))  
+                            new_product.size.append(size[position])                            
+                        position += 1              
                 
                 #print("new_product.size[0] is: " + new_product.size[0])
-                print("new_product.size[0] is: " + str(new_product.size[0]))
-                print(type(new_product.size[0]))
+                #print("new_product.size[0] is: " + str(new_product.size[0]))
+                #print(type(new_product.size[0]))
                 new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]] 
                 new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
                 new_product.size = str(new_product.size).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '')
@@ -226,12 +196,21 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 #print("I am about to go into if statement (on sale page 1)")
                 #print("the size in first page before if statement (on sale) is: " + str(size))
                 
+                position = 0
+                new_product.size = []
+                new_product.size.append(0)
                 if len(size) == 1:
-                    #print("I am in if statement (on sale page 1)")
                     new_product.size = [Decimal(1), size[0]]
                 else:
-                    #print("I am in else statement (on sale page 1)")
-                    new_product.size = [Decimal(size[0]), size[1]]                    
+                    for n in size:                        
+                        #is this a number?
+                        try:
+                            new_product.size[0] = [Decimal(size[position])]
+                            new_product.size[0] = Decimal(size[position])                        
+                        #put everything that's not a number into a spot that's not 0 because that's where the number is stored   
+                        except InvalidOperation:
+                            new_product.size.append(size[position])                            
+                        position += 1                    
                     
                 #print("the size in first page (on sale) is: " + str(size)) # ['lb']                
                 new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]                
@@ -243,14 +222,11 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                 new_product.website = 'FestivalFoods'
                 list_of_products.append(new_product)
                 
-    #nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[3]/div/div/ul/li[11]/a')    
-    #nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[3]/div/div/ul/li[11]/a')  
-    nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[3]/div/div/nav/ul/li[11]/a')  
-     
-
+    #nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[3]/div/div/nav/ul/li[11]/a')  
+    nextButtonLink = driver.find_element_by_xpath('/html/body/div[1]/div/section/article/section/div/div[3]/div/div/div[1]/div/div/div[5]/div[3]/div[3]/div/div/nav/ul/li[11]/a')  
     
     #pageCount = 2
-    pageCount = 169 #testing
+    pageCount = 177 #testing
     
     #time.sleep(10)    
     
@@ -315,9 +291,8 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
             print("I've either reached the end of the products or I had some trouble finding the page link.")
             driver.close() 
             
-        #time.sleep(10)
-        #element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/main/section/div[6]/div/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[2]/div[1]/a")) # product list
-        element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[2]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) # product list        
+        #time.sleep(10)        
+        element_present = expected_conditions.presence_of_all_elements_located((By.XPATH, "/html/body/div[1]/div/section/article/section/div/div[3]/div/div/div[1]/div/div/div[5]/div[3]/div[2]/div[2]/ul/li[1]/div/div[2]/div[1]/a/img")) # product list        
     
         try:
             wait.until(element_present);
@@ -373,10 +348,7 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                     
                     try:
                         size = item.select('span[class="fp-item-size"]')[0].getText().split(" ")
-                    except IndexError:
-                       #size = []
-                       #size = ["ct"]
-                       #size[0] = "ct"
+                    except IndexError:                        
                        size = ["ct"]
                                         
                     if size[0].endswith("."):
@@ -384,12 +356,10 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                        old = "."
                        new = ""
                        maxreplace = 1
-                       size[0] = new.join(size[0].rsplit(old, maxreplace))
-                       
-                    #if not size[0].isnumeric():
+                       size[0] = new.join(size[0].rsplit(old, maxreplace))                       
+                    
                     if size_letters_and_numbers.match(size[0]):                    
-                       size = re.split('(\d+)',size[0])
-                       #size.pop(0)
+                       size = re.split('(\d+)',size[0])                       
                        size[0] = size[1]
                        size[1] = size[2]
                     
@@ -408,12 +378,27 @@ def scrape_FestivalFoods_search_results(list_of_products, product):
                        size[0] = float(sum(Fraction(s) for s in size[0].split()))
                        size[0] = Decimal(size[0])
                     
+                    #if len(size) == 1:                        
+                        #new_product.size = [Decimal(1), size[0]]
+                    #else:
+                        #new_product.size = [Decimal(size[0]), size[1]]
+                    #print("the product size on second page from new_product.size[0] is: " + str(new_product.size[0]))   
+                    
+                    position = 0
+                    new_product.size = []
+                    new_product.size.append(0)
                     if len(size) == 1:
-                        
                         new_product.size = [Decimal(1), size[0]]
                     else:
-                        new_product.size = [Decimal(size[0]), size[1]]
-                    #print("the product size on second page from new_product.size[0] is: " + str(new_product.size[0]))   
+                        for n in size:                        
+                            #is this a number?
+                            try:
+                                new_product.size[0] = [Decimal(size[position])]
+                                new_product.size[0] = Decimal(size[position])                        
+                            #put everything that's not a number into a spot that's not 0 because that's where the number is stored   
+                            except InvalidOperation:
+                                new_product.size.append(size[position])                            
+                            position += 1      
                     
                     new_product.price_per = [round(new_product.price / new_product.size[0], 2), new_product.size[1]]
                     new_product.price_per = str(new_product.price_per).replace('Decimal', '').replace('\'', '').replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(',', '/')
