@@ -1,6 +1,6 @@
 # Compare-Grocery-Prices
 
-To run this app:
+To run the python app:
 
 Install python 
 
@@ -17,3 +17,5 @@ Add the path to the chromedriver.exe file in your system PATH variable as descri
 Run Scraper.py > festival.txt in the command prompt to see how the festival script is currently working. 
 
 You can use taskkill /F /IM "chromedriver.exe" /T if the script fails without closing the browser
+
+To run the Ionic app:
