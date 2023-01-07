@@ -10,7 +10,7 @@ Install the python lxml package - pip install lxml in the command prompt.
 
 Install the python beautifulsoup4 package - pip install beautifulsoup4 in the command prompt.
 
-Install the python selenium package. You may be able to use pip install selenium pip install selenium in the command prompt.
+Install the python selenium package - pip install selenium in the command prompt.
 
 Add the path to the chromedriver.exe file in your system PATH variable as described here: https://zwbetz.com/download-chromedriver-binary-and-add-to-your-path-for-automated-functional-testing/.
 
