@@ -8,7 +8,7 @@ Install the python package manager (pip). You can use the command curl https://b
 
 Install the python lxml package - pip install lxml in the command prompt.
 
-Install the python beautifulsoup4 package. You may be able to use pip install beautifulsoup4 in the command prompt.
+Install the python beautifulsoup4 package - pip install beautifulsoup4 in the command prompt.
 
 Install the python selenium package. You may be able to use pip install selenium pip install selenium in the command prompt.
 
