@@ -6,7 +6,7 @@ Install python
 
 Install the python package manager (pip). You can use the command curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py in the command prompt
 
-Install the python lxml package. You may be able to use pip install lxml in the command prompt.
+Install the python lxml package - pip install lxml in the command prompt.
 
 Install the python beautifulsoup4 package. You may be able to use pip install beautifulsoup4 in the command prompt.
 
