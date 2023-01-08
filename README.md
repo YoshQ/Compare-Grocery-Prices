@@ -19,12 +19,21 @@ Run Scraper.py > festival.txt in the command prompt to see how the festival scri
 You can use taskkill /F /IM "chromedriver.exe" /T if the script fails without closing the browser
 
 To run the Ionic app:
+
 "npm install angular cli" in command prompt
+
 https://nodejs.org/en/download/releases/
+
 MSI installer
+
 https://github.com/coreybutler/nvm-windows/releases
+
 nvm-setup.exe
+
 npm install -g @ionic/cli
+
 nvm install 16
+
 go to the "Ionic" folder from this github project
+
 run "ionic serve" in command prompt
