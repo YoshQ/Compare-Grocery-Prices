@@ -22,7 +22,7 @@ To run the Ionic app:
 
 "npm install angular cli" in command prompt
 
-https://nodejs.org/en/download/releases/
+[(https://nodejs.org/en/blog/release/v16.16.0/)](https://nodejs.org/en/blog/release/v16.16.0/)
 
 MSI installer
 
